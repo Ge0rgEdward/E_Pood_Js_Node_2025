@@ -1,0 +1,27 @@
+.box{
+    border: 3px solid;
+    width: 100%;
+    height: 125px;
+}
+
+#shop-header{
+    display: flex;
+    background: white;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+#nav-links{
+    display: flex;
+    list-style: none;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+#nav-links a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
