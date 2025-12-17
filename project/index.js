@@ -43,14 +43,31 @@
 // document.getElementById("box1").prepend(newH1);
 // document.getElementById("box1").append(newH1);
 
-const header = document.getElementById('header');
-header.style.background = '#333' 
-header.style.color = 'white';
-header.style.padding = '20px';
-header.style.display = 'flex';
-header.style.justifyContent = 'space-between';
-header.style.alignItems = 'center';
+// const header = document.getElementById('header');
+// header.style.background = '#333' 
+// header.style.color = 'white';
+// header.style.padding = '20px';
+// header.style.display = 'flex';
+// header.style.justifyContent = 'space-between';
+// header.style.alignItems = 'center';
 
-const logo = document.createElement('h1');
-logo.textContent = 'ePood';
-logo.style.margin = '0';
+// const logo = document.createElement('h1');
+// logo.textContent = 'ePood';
+// logo.style.margin = '0';
+
+
+import { displayAllProducts } from './allProductView.js';
+import { displayProductDetail } from './productDetailView.js';
+import { displayCart } from './productDetailView.js';
+
+const products = [
+    { title: 'Grill', category: 'BBQ', price: 120.99 },
+    { title: 'Tongs', category: 'BBQ', price: 15.50 },
+    { title: 'Protein Shake', category: 'Supplements', price: 45.00 }
+];
+
+const container = document.getElementById('products-container');
+displayAllProducts(products, container);
+displayProductDetail(products, container);
+displayCart(cartItems, container);
+

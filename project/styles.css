@@ -25,3 +25,185 @@
     color: black;
     font-weight: bold;
 }
+
+/* styles.css */
+
+/* Üldised stiilid */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+header#shop-header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header#shop-header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+main {
+    padding: 2rem;
+}
+
+/* Kategooria pealkiri */
+.category-header {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 0.5rem;
+}
+
+/* Kategooria konteiner */
+.category-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* Tootekaart */
+.product-card {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    flex: 1 1 calc(25% - 1rem); /* 4 kaarti reas, gap arvestatud */
+    box-sizing: border-box;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.product-card h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: #222;
+}
+
+.product-card p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.product-price {
+    font-weight: bold;
+    color: #e91e63;
+    font-size: 1.1rem;
+}
+
+
+.product-detail-card {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    max-width: 600px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.product-detail-card h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.product-detail-card p {
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.product-detail-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+    border-radius: 10px;
+}
+
+.cart-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.cart-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    align-items: center;
+}
+
+.cart-item p {
+    margin: 0;
+}
+
+.cart-item-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.cart-item-quantity, .cart-item-price {
+    color: #555;
+}
+
+.cart-total {
+    margin-top: 1rem;
+    text-align: right;
+    font-size: 1.5rem;
+    color: #e91e63;
+}
+
+/* Responsive: väiksemad ekraanid */
+@media (max-width: 1024px) {
+    .product-card {
+        flex: 1 1 calc(33.33% - 1rem); /* 3 kaarti reas */
+    }
+}
+
+@media (max-width: 768px) {
+    .product-card {
+        flex: 1 1 calc(50% - 1rem); /* 2 kaarti reas */
+    }
+}
+
+@media (max-width: 480px) {
+    .product-card {
+        flex: 1 1 100%; /* 1 kaart reas */
+    }
+}
