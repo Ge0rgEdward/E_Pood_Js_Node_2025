@@ -1,20 +1,25 @@
 export class Product {
-  constructor(title, price, category) {
-    this.id = crypto.randomUUID();
+  constructor({ id, title, price, category, image = "", description = "" }) {
+    this.id = id || crypto.randomUUID();
     this.title = title;
-    this.price = price;
-    this.category = category;
+    this.price = Number(price) || 0;
+    this.category = category || "Other";
+    this.image = image || "";
+    this.description = description || "";
   }
 
   displayProduct() {
-    console.log(`
-            ID: ${this.id}, 
-            Title: ${this.title}, 
-            Price: $${this.price}, 
-            Category: ${this.category}`);
+    console.log(
+      `ID: ${this.id}, Title: ${this.title}, Price: €${this.price}, Category: ${this.category}`
+    );
   }
 
   discountedPrice(discountPercent) {
-    return this.price - (this.price * discountPercent) / 100;
+    const d = Math.max(0, Number(discountPercent) || 0);
+    return this.price - (this.price * d) / 100;
+  }
+
+  static fromJSON(obj) {
+    return new Product(obj);
   }
 }
