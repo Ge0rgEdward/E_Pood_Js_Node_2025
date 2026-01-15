@@ -56,7 +56,7 @@
 // }
 import { state, els, updateHeaderCounts, formatMoney, VAT_RATE } from "/main.js";
 import { Order } from "/constructors/Order.js";
-import { navigate } from "/router.js";
+import { navigate } from "/views/router.js";
 
 export function displayCartView() {
   els.main.innerHTML = "";

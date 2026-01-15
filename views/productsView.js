@@ -1,7 +1,7 @@
 // productsView.js
 
 import { state, els, updateHeaderCounts, formatMoney } from "/main.js";
-import { navigate } from "/router.js";
+import { navigate } from "/views/router.js";
 
 function setFavButtonText(btn, productId) {
   btn.textContent = state.customer.isFavorite(productId) ? "💚 Lemmik" : "🤍 Lemmik";
@@ -22,15 +22,15 @@ function createProductCard(product) {
   price.className = "product-price";
   price.textContent = formatMoney(product.price);
 
-  // pilt (kui olemas)
+  // pilt 
   if (product.image) {
     const img = document.createElement("img");
     img.src = product.image;
     img.alt = product.title;
-    img.style.width = "100%";
-    img.style.height = "160px";
+    img.style.width = "120px";
+    img.style.height = "120px";
     img.style.objectFit = "cover";
-    img.style.borderRadius = "10px";
+    img.style.borderRadius = "0px";
     img.style.marginTop = "10px";
     card.appendChild(img);
   }

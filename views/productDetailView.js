@@ -37,7 +37,7 @@
 // }
 
 import { state, els, updateHeaderCounts, formatMoney } from "/main.js";
-import { navigate } from "./views/router.js";
+import { navigate } from "/views/router.js";
 
 export function displayProductDetailView(productId) {
   const p = state.products.find((x) => x.id === productId);

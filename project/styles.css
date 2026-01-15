@@ -95,7 +95,7 @@ main {
 }
 
 .product-detail-image {
-  max-width: 100%;
+  width: 120px;
   height: auto;
   margin-top: 1rem;
   border-radius: 10px;
@@ -146,6 +146,8 @@ main {
 
 .product-card img {
   display: block;
+  width: 5px;
+  height: 120px;
 }
 .product-card button {
   padding: 8px 12px;
