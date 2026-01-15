@@ -1,15 +1,15 @@
 // productsView.js
 
-import { state, els, updateHeaderCounts, formatMoney } from "../main.js";
-import { navigate } from "../router.js";
+import { state, els, updateHeaderCounts, formatMoney } from "/main.js";
+import { navigate } from "/router.js";
 
 function setFavButtonText(btn, productId) {
   btn.textContent = state.customer.isFavorite(productId) ? "💚 Lemmik" : "🤍 Lemmik";
 }
 
-function displayProductCard(product) {
+function createProductCard(product) {
   const card = document.createElement("div");
-  card.classList.add("product-card");
+  card.className = "product-card";
   card.style.cursor = "pointer";
 
   const title = document.createElement("h2");
@@ -19,33 +19,46 @@ function displayProductCard(product) {
   category.textContent = `Category: ${product.category}`;
 
   const price = document.createElement("p");
+  price.className = "product-price";
   price.textContent = formatMoney(product.price);
-  price.classList.add("product-price");
+
+  // pilt (kui olemas)
+  if (product.image) {
+    const img = document.createElement("img");
+    img.src = product.image;
+    img.alt = product.title;
+    img.style.width = "100%";
+    img.style.height = "160px";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "10px";
+    img.style.marginTop = "10px";
+    card.appendChild(img);
+  }
 
   const btnRow = document.createElement("div");
   btnRow.style.display = "flex";
   btnRow.style.gap = "10px";
-  btnRow.style.marginTop = "10px";
+  btnRow.style.marginTop = "12px";
   btnRow.style.flexWrap = "wrap";
 
-  const cartButton = document.createElement("button");
-  cartButton.textContent = "Lisa korvi";
-  cartButton.addEventListener("click", (e) => {
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "Lisa korvi";
+  addBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     state.cart.addProduct(product, 1);
     updateHeaderCounts();
   });
 
-  const favButton = document.createElement("button");
-  setFavButtonText(favButton, product.id);
-  favButton.addEventListener("click", (e) => {
+  const favBtn = document.createElement("button");
+  setFavButtonText(favBtn, product.id);
+  favBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     state.customer.toggleFavorite(product.id);
-    setFavButtonText(favButton, product.id);
+    setFavButtonText(favBtn, product.id);
     updateHeaderCounts();
   });
 
-  btnRow.append(cartButton, favButton);
+  btnRow.append(addBtn, favBtn);
 
   card.addEventListener("click", () => navigate("productDetail", product.id));
 
@@ -62,25 +75,25 @@ export function displayProductsView(filterCategory = "all") {
       ? state.products
       : state.products.filter((p) => p.category === filterCategory);
 
-  // Group by category
+  // kategooriate kaupa
   const categories = {};
   products.forEach((p) => {
     (categories[p.category] ||= []).push(p);
   });
 
-  for (const categoryName of Object.keys(categories)) {
-    const categoryHeader = document.createElement("h2");
-    categoryHeader.textContent = categoryName;
-    categoryHeader.classList.add("category-header");
-    els.container.appendChild(categoryHeader);
+  Object.keys(categories).forEach((categoryName) => {
+    const header = document.createElement("h2");
+    header.className = "category-header";
+    header.textContent = categoryName;
 
-    const categoryContainer = document.createElement("div");
-    categoryContainer.classList.add("category-container");
+    const wrap = document.createElement("div");
+    wrap.className = "category-container";
 
     categories[categoryName].forEach((p) => {
-      categoryContainer.appendChild(displayProductCard(p));
+      wrap.appendChild(createProductCard(p));
     });
 
-    els.container.appendChild(categoryContainer);
-  }
+    els.container.append(header, wrap);
+  });
 }
+

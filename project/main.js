@@ -56,10 +56,10 @@
 // logo.style.margin = '0';
 
 
-import { Cart } from "./Cart.js";
-import { Customer } from "./Customer.js";
-import { Product } from "./Product.js";
-import { navigate } from "../views/router.js";
+import { Cart } from "/constructors/Cart.js";
+import { Customer } from "/constructors/Customer.js";
+import { Product } from "/constructors/Product.js";
+import { navigate } from "/views/router.js";
 
 // KM rate: muuda vajadusel
 export const VAT_RATE = 0.22;
@@ -98,7 +98,7 @@ export function initApp() {
 }
 
 async function loadProducts() {
-  const res = await fetch("./products.json", { cache: "no-store" });
+  const res = await fetch("/api/products.json", { cache: "no-store" });
   if (!res.ok) throw new Error(`Products load failed: ${res.status}`);
   const data = await res.json();
 
@@ -126,6 +126,9 @@ function wireHeader() {
   await loadProducts();
   initApp();
 })();
+
+
+
 
 
 

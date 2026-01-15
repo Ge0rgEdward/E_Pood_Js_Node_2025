@@ -144,6 +144,20 @@ main {
   color: #e91e63;
 }
 
+.product-card img {
+  display: block;
+}
+.product-card button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.product-card button:hover {
+  filter: brightness(0.95);
+}
+
+
 @media (max-width: 1024px) {
   .product-card {
     flex: 1 1 calc(33.33% - 1rem);

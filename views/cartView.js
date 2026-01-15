@@ -55,7 +55,7 @@
 //     container.appendChild(total);
 // }
 import { state, els, updateHeaderCounts, formatMoney, VAT_RATE } from "/main.js";
-import { Order } from "/Order.js";
+import { Order } from "/constructors/Order.js";
 import { navigate } from "/router.js";
 
 export function displayCartView() {

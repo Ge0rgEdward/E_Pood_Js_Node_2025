@@ -1,5 +1,5 @@
 import { state, els, updateHeaderCounts, formatMoney } from "/main.js";
-import { navigate } from "/router.js";
+import { navigate } from "/views/router.js";
 
 export function displayFavoritesView() {
   els.main.innerHTML = `<h2 class="cart-title">Lemmikud</h2>`;
