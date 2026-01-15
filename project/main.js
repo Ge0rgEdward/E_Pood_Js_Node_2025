@@ -81,7 +81,8 @@ export const els = {
   navFav: document.getElementById("nav-favorites"),
   navCart: document.getElementById("nav-cart"),
   cartCount: document.getElementById("cart-count"),
-  favCount: document.getElementById("fav-count")
+  favCount: document.getElementById("fav-count"),
+  categoryBar: document.getElementById("category-bar"),
 };
 
 export function formatMoney(n) {
@@ -121,6 +122,51 @@ function wireHeader() {
   els.navFav.addEventListener("click", noReload(() => navigate("favorites")));
   els.navCart.addEventListener("click", noReload(() => navigate("cart")));
 }
+
+function setActiveCategoryButton(category ) {
+  const btns = els.categoryBar?. querySelectorAll("button[data-category]") || [];
+  btns.forEach((b) => {
+    b.classList.toggle("active", b.dataSet.category === category);
+  }); 
+}
+
+function buildCategory() {
+  if (!els.categoryBar) return;
+}
+
+const categories = Array.from(new Set(state.products.map ((p) => p.category))).sort();
+
+els.categoryBar.InnerHTML = "";
+
+const makeBtn = (label, categoryValue) => {
+  const btn = document.createElement('button');
+  btn.className = "category-btn";
+  btn.textContent = label;
+  btn.dataset.categoryValue;
+
+  btn.addEventListener("click", () => {
+    navigate("allProducts, categoryValue");
+    setActiveCategoryButton(categoryValue);
+  })
+
+  return btn;
+}
+
+// "ALL" nupp (kuvab kõik tooted ühes kategoorias)
+
+els.categoryBar.appendChild(makebtn("All", "all"));
+
+
+//kategooriad
+
+setActiveCategoryButton("all");
+
+(async function boot() {
+  wireHeader();
+  await loadProducts();
+  initApp();
+})();
+
 
 (async function boot() {
   wireHeader();
