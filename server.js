@@ -51,7 +51,7 @@ app.get("/api/products", async (req, res) => {
 
     let products;
     if (empty) {
-      console.log("📦 products.json tühi/puudub → laen FakeStore API-st...");
+      console.log("products.json tühi: laen FakeStore API-st");
       products = await fetchAndSaveProducts();
     } else {
       const raw = await readFile(PRODUCTS_FILE, "utf-8");
