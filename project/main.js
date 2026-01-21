@@ -1,77 +1,46 @@
-// import { Product } from "./product.js";
-// import { Cart } from "./cart.js";
-// import { Order } from "./order.js";
-// import { Customer } from "./customer.js";
 
-// const laptop = new Product("Laptop", 999.99, "Electronics");
-// const phone = new Product("Smartphone", 499.99, "Electronics");
-
-// const myCart = new Cart();
-// myCart.addProduct(laptop, 1);
-// myCart.addProduct(phone, 2);
-
-// console.log(`Total Items: ${myCart.totalItems}`);
-// console.log(`Total Price: $${myCart.calculateTotal().toFixed(2)}`);
-
-// myCart.removeProduct(phone.id);
-// console.log(`Total Items in Cart after removal: ${myCart.totalItems}`);
-// console.log(
-//   `Total Price after removal: $${myCart.calculateTotal().toFixed(2)}`
-// );
-
-// const myOrder = new Order(myCart);
-// myOrder.printOrder();
-
-// const customer1 = new Customer("Alice");
-// customer1.placeOrder(myCart);
-// customer1.printOrderHistory();
-
-// //STEP 1 CREATE ELEMENT 
-// const newH1 = document.createElement.createElement("h1")
-
-// // STEP 2 ADD ATTRIBUTES/PROPERTIES
-// newH1. textContent = "I like pizza!"
-// newH1.id = "myH1";
-// newH1.style.color = "tomato";
-// newH1.style.textAlign = "center";
-
-
-// //STEP 3 APPEND ELEMENT TO DOM 
-
-// document.body.prepend(newH1);
-// document.body.prepend(newH1);
-// document.getElementById("box1").prepend(newH1);
-// document.getElementById("box1").append(newH1);
-
-// const header = document.getElementById('header');
-// header.style.background = '#333' 
-// header.style.color = 'white';
-// header.style.padding = '20px';
-// header.style.display = 'flex';
-// header.style.justifyContent = 'space-between';
-// header.style.alignItems = 'center';
-
-// const logo = document.createElement('h1');
-// logo.textContent = 'ePood';
-// logo.style.margin = '0';
 
 
 import { Cart } from "/constructors/Cart.js";
 import { Customer } from "/constructors/Customer.js";
 import { Product } from "/constructors/Product.js";
 import { navigate } from "/views/router.js";
-import { getAllProducts } from "/api.js";
+import { getAllProducts, getFavoritesProductByUserID } from "/api.js";
 
 
-// KM rate: muuda vajadusel
-export const VAT_RATE = 0.22;
+const USER_ID_KEY = "epood_user_id";
 
-// “globaalne” app state
+export function getOrCreateUserId() {
+  let id = sessionStorage.getItem(USER_ID_KEY);
+
+  if (!id) {
+    id =
+      (globalThis.crypto?.randomUUID?.() ??
+        `uid_${Date.now()}_${Math.random().toString(16).slice(2)}`);
+
+    sessionStorage.setItem(USER_ID_KEY, id);
+  }
+
+  return id;
+}
+
+export const userId = getOrCreateUserId();
+console.log("userId (sessionStorage):", userId);
+
+
+
+
+
 export const state = {
+  userId,
   products: [],
   cart: new Cart(),
-  customer: new Customer("Georg")
+  customer: new Customer("Georg"),
 };
+
+state.customer.id = userId;
+
+export const VAT_RATE = 0.22;
 
 export const els = {
   main: document.getElementById("main-section"),
@@ -89,27 +58,41 @@ export function formatMoney(n) {
   return `${Number(n).toFixed(2)} €`;
 }
 
+export async function refreshFavoritesCount() {
+  try {
+    const favIds = await getFavoritesProductByUserID(state.userId);
+    els.favCount.textContent = String(favIds.length);
+    state.favIds = favIds;
+  } catch (err) {
+    console.error("Failed to refresh favorites count:", err);
+    els.favCount.textContent = els.favCount.textContent || "0";
+  }
+}
+
+
 export function updateHeaderCounts() {
   els.cartCount.textContent = String(state.cart.totalItems);
   els.favCount.textContent = String(state.customer.favorites.length);
+  refreshFavoritesCount();
 }
 
 export function initApp() {
   els.main.innerHTML = "";
+  els.container.innerHTML = "";
   navigate("allProducts", "all");
   updateHeaderCounts();
+  setActiveCategoryButton("all");
 }
 
 async function loadProducts() {
   const data = await getAllProducts();
-   if (!Array.isArray(data)) {
+
+  if (!Array.isArray(data)) {
     throw new Error("API peab tagastama massiivi ([])!");
   }
 
   state.products = data.map(Product.fromJSON);
 }
-  
-
 
 function wireHeader() {
   const noReload = (fn) => (e) => {
@@ -123,56 +106,60 @@ function wireHeader() {
   els.navCart.addEventListener("click", noReload(() => navigate("cart")));
 }
 
-function setActiveCategoryButton(category ) {
-  const btns = els.categoryBar?. querySelectorAll("button[data-category]") || [];
-  btns.forEach((b) => {
-    b.classList.toggle("active", b.dataSet.category === category);
-  }); 
-}
-
-function buildCategory() {
+function setActiveCategoryButton(category) {
   if (!els.categoryBar) return;
+
+  const btns = els.categoryBar.querySelectorAll("button[data-category]");
+  btns.forEach((b) => {
+    b.classList.toggle("active", b.dataset.category === category);
+  });
 }
 
-const categories = Array.from(new Set(state.products.map ((p) => p.category))).sort();
+function buildCategoryBar() {
+  if (!els.categoryBar) return;
 
-els.categoryBar.InnerHTML = "";
+  const categories = Array.from(new Set(state.products.map((p) => p.category))).sort();
 
-const makeBtn = (label, categoryValue) => {
-  const btn = document.createElement('button');
-  btn.className = "category-btn";
-  btn.textContent = label;
-  btn.dataset.categoryValue;
+  
+  els.categoryBar.innerHTML = "";
 
-  btn.addEventListener("click", () => {
-    navigate("allProducts, categoryValue");
-    setActiveCategoryButton(categoryValue);
-  })
+  const makeBtn = (label, categoryValue) => {
+    const btn = document.createElement("button");
+    btn.className = "category-btn";
+    btn.textContent = label;
 
-  return btn;
+    // dataset õigesti
+    btn.dataset.category = categoryValue;
+
+    btn.addEventListener("click", () => {
+      navigate("allProducts", categoryValue);
+      setActiveCategoryButton(categoryValue);
+    });
+
+    return btn;
+  };
+
+  // "All"
+  els.categoryBar.appendChild(makeBtn("All", "all"));
+
+  // kategooriad
+  categories.forEach((c) => {
+    els.categoryBar.appendChild(makeBtn(c, c));
+  });
+
+  setActiveCategoryButton("all");
 }
 
-// "ALL" nupp (kuvab kõik tooted ühes kategoorias)
-
-els.categoryBar.appendChild(makebtn("All", "all"));
-
-
-//kategooriad
-
-setActiveCategoryButton("all");
 
 (async function boot() {
   wireHeader();
   await loadProducts();
+  buildCategoryBar();
   initApp();
 })();
 
 
-(async function boot() {
-  wireHeader();
-  await loadProducts();
-  initApp();
-})();
+
 
 
 

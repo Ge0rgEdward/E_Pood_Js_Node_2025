@@ -1,10 +1,20 @@
-// productsView.js
-
 import { state, els, updateHeaderCounts, formatMoney } from "/main.js";
 import { navigate } from "/views/router.js";
+import {
+  getFavoritesProductByUserID,
+  addFavoriteProductById,
+  deleteFavoriteProductById
+} from "/api.js";
+
+let favSet = new Set();
+
+async function loadFavSet() {
+  const ids = await getFavoritesProductByUserID(state.userId);
+  favSet = new Set(ids.map(String));
+}
 
 function setFavButtonText(btn, productId) {
-  btn.textContent = state.customer.isFavorite(productId) ? "💚 Lemmik" : "🤍 Lemmik";
+  btn.textContent = favSet.has(String(productId)) ? "💚 Lemmik" : "🤍 Lemmik";
 }
 
 function createProductCard(product) {
@@ -22,7 +32,7 @@ function createProductCard(product) {
   price.className = "product-price";
   price.textContent = formatMoney(product.price);
 
-  // pilt 
+  // pilt
   if (product.image) {
     const img = document.createElement("img");
     img.src = product.image;
@@ -51,11 +61,27 @@ function createProductCard(product) {
 
   const favBtn = document.createElement("button");
   setFavButtonText(favBtn, product.id);
-  favBtn.addEventListener("click", (e) => {
+
+  favBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
-    state.customer.toggleFavorite(product.id);
-    setFavButtonText(favBtn, product.id);
-    updateHeaderCounts();
+
+    const pid = String(product.id);
+
+    try {
+      if (favSet.has(pid)) {
+        await deleteFavoriteProductById(state.userId, pid);
+        favSet.delete(pid);
+      } else {
+        await addFavoriteProductById(state.userId, pid);
+        favSet.add(pid);
+      }
+
+      setFavButtonText(favBtn, pid);
+      updateHeaderCounts();
+    } catch (err) {
+      console.error("Favorite toggle failed:", err);
+      alert("Lemmiku muutmine ebaõnnestus.");
+    }
   });
 
   btnRow.append(addBtn, favBtn);
@@ -66,9 +92,18 @@ function createProductCard(product) {
   return card;
 }
 
-export function displayProductsView(filterCategory = "all") {
+// ✅ nüüd async, et saaks enne renderdamist lemmikud backendist kätte
+export async function displayProductsView(filterCategory = "all") {
   els.main.innerHTML = "";
   els.container.innerHTML = "";
+
+  // ✅ lae lemmikute set backendist
+  try {
+    await loadFavSet();
+  } catch (err) {
+    console.error("Failed to load favorites:", err);
+    favSet = new Set(); // fallback: ei katkesta toodete kuvamist
+  }
 
   const products =
     filterCategory === "all"
@@ -96,4 +131,3 @@ export function displayProductsView(filterCategory = "all") {
     els.container.append(header, wrap);
   });
 }
-

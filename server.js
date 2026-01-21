@@ -17,6 +17,7 @@ const PROJECT_DIR = path.join(__dirname, "project");
 
 const DATA_DIR = path.join(__dirname, "data");
 const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
+const FAVORITES_FILE = path.join(DATA_DIR, "favorites.json");
 
 // Staatilised failid 
 app.use(express.static(PROJECT_DIR));
@@ -44,6 +45,26 @@ async function fetchAndSaveProducts() {
   return products;
 }
 
+async function readFavoritesFile() {
+  try {
+    const raw = await readFile(FAVORITES_FILE, "utf-8");
+    const obj = raw.trim() ? JSON.parse(raw) : {};
+    return obj && typeof obj === "object" ? obj : {};
+  } catch {
+    return {};
+  }
+}
+
+async function writeFavoritesFile(favsObj) {
+  await mkdir(DATA_DIR, { recursive: true });
+  await writeFile(FAVORITES_FILE, JSON.stringify(favsObj, null, 2), "utf-8");
+}
+
+function normalizeProductId(productId) {
+  return String(productId);
+}
+
+
 // API: tagastab kõik tooted 
 app.get("/api/products", async (req, res) => {
   try {
@@ -66,6 +87,57 @@ app.get("/api/products", async (req, res) => {
     res.status(500).json({ error: "Andmete lugemine ebaõnnestus", details: err.message });
   }
 });
+
+app.get("/api/favorites/:userID", async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const favs = await readFavoritesFile();
+    const list = Array.isArray(favs[userID]) ? favs[userID] : [];
+    res.json(list);
+  } catch (err) {
+    res.status(500).json({ error: "Favorites read failed", details: err.message });
+  }
+});
+
+app.post("/api/favorites/:userID/:productId", async (req, res) => {
+  try {
+    const { userID, productId } = req.params;
+    const pid = normalizeProductId(productId);
+
+    const favs = await readFavoritesFile();
+    const list = Array.isArray(favs[userID]) ? favs[userID] : [];
+
+    if (!list.includes(pid)) list.push(pid);
+
+    favs[userID] = list;
+    await writeFavoritesFile(favs);
+
+    res.status(201).json({ ok: true, favorites: list });
+  } catch (err) {
+    res.status(500).json({ error: "Favorite add failed", details: err.message });
+  }
+});
+
+
+app.delete("/api/favorites/:userID/:productId", async (req, res) => {
+  try {
+    const { userID, productId } = req.params;
+    const pid = normalizeProductId(productId);
+
+    const favs = await readFavoritesFile();
+    const list = Array.isArray(favs[userID]) ? favs[userID] : [];
+
+    const next = list.filter((x) => x !== pid);
+    favs[userID] = next;
+
+    await writeFavoritesFile(favs);
+
+    res.json({ ok: true, favorites: next });
+  } catch (err) {
+    res.status(500).json({ error: "Favorite delete failed", details: err.message });
+  }
+});
+
 
 // API: Uuendab  
 app.get("/api/fetch-products", async (req, res) => {

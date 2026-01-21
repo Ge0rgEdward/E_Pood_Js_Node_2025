@@ -27,6 +27,12 @@ header#shop-header h1 {
   padding: 0;
 }
 
+#nav-links a:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  text-decoration: underline;
+}
+
 #nav-links a {
   color: #fff;
   text-decoration: none;
@@ -75,7 +81,7 @@ main {
 
 .product-card p {
   margin: 0.5rem 0;
-  color: #555;
+  color: #555555;
 }
 
 .product-price {
@@ -157,6 +163,35 @@ main {
 }
 .product-card button:hover {
   filter: brightness(0.95);
+}
+
+.category-bar {
+  display: flex;
+  gap: 10px;
+  padding: 12px 2rem;
+  overflow-x: auto;
+  background: #fff;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.category-btn {
+  padding: 8px 12px;
+  border: 1px solid rgba(0,0,0,0.15);
+  background: #fff;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+  white-space: nowrap;
+}
+
+.category-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.96);
+}
+
+.category-btn.active {
+  border-color: rgba(233, 30, 99, 0.6);
+  font-weight: 700;
 }
 
 
